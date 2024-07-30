@@ -12,7 +12,7 @@ namespace MyFriends3._5.Models
         public string Phone { get; set; }
         public ICollection<Picture> UserPictures { get; set; } = new List<Picture>();
         public int? ProfilePictureId { get; set; }
-        public ProfilePicture? ProfilePicture { get; set; }
+        public ProfilePicture? ProfilePicture { get; internal set; }
     }
 
 }

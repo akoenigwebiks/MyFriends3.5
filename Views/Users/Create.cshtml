@@ -1,47 +1,75 @@
 ﻿@model MyFriends3._5.ViewModels.UserCreateViewModel
 
 @{
-    ViewData["Title"] = "Register";
-    string userJson = System.Text.Json.JsonSerializer.Serialize(Model);
+    ViewData["Title"] = "Create";
 }
 
-<h1>Register a profile</h1>
-
+<h4>Register</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+<div class="container">
+    <form asp-action="Create" enctype="multipart/form-data" onsubmit="validate(event)">
+        <div class="col-12">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="User.FirstName" class="control-label"></label>
-                <input asp-for="User.FirstName" class="form-control" />
-                <span asp-validation-for="User.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.LastName" class="control-label"></label>
-                <input asp-for="User.LastName" class="form-control" />
-                <span asp-validation-for="User.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.Email" class="control-label"></label>
-                <input asp-for="User.Email" class="form-control" />
-                <span asp-validation-for="User.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="User.Phone" class="control-label"></label>
-                <input asp-for="User.Phone" class="form-control" />
-                <span asp-validation-for="User.Phone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProfileImage" class="control-label"></label>
-                <input asp-for="ProfileImage" class="form-control" type="file" />
+        </div>
+        <!-- First row: Image input and Name inputs -->
+        <div class="row mb-3">
+            <!-- Image input -->
+            <div class="form-group col-6 text-center">
+                <img id="profilePreview"
+                     class="rounded-circle clickable"
+                     alt="Profile Picture"
+                     style="width: 150px; height: 150px; cursor: pointer;"
+                     onclick="document.getElementById('fileInput').click();" />
+                <input id="fileInput"
+                       asp-for="ProfileImage"
+                       type="file"
+                       class="form-control-file"
+                       style="display: none;"
+                       onchange="showPreview(event);" />
                 <span asp-validation-for="ProfileImage" class="text-danger"></span>
             </div>
-            <div class="form-group py-3 d-grid gap-2">
-                <input type="submit" value="Create" class="btn btn-primary btn-block" />
+            <!-- Name inputs -->
+            <div class="col-6">
+                <div class="form-group row mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">FirstName</span>
+                        <input class="form-control" placeholder="First Name" aria-label="First Name" aria-describedby="basic-addon1" type="text" data-val="true" data-val-required="The FirstName field is required." id="User_FirstName" name="User.FirstName" value="dudu">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="User.FirstName" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 h-15"></div>
+                <div class="form-group row mt-3">
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon2">LastName</span>
+                        <input class="form-control" placeholder="Last Name" aria-label="Last Name" aria-describedby="basic-addon2" type="text" data-val="true" data-val-required="The LastName field is required." id="User_LastName" name="User.LastName" value="Shuku">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="User.LastName" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
+        <!-- Email -->
+        <div class="form-group row mb-3">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon3">@Html.DisplayNameFor(model => model.User.Email)</span>
+                <input asp-for="User.Email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon3">
+                <span asp-validation-for="User.Email" class="text-danger"></span>
+            </div>
+        </div>
+        <!-- Phone -->
+        <div class="form-group row mb-3">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon4">@Html.DisplayNameFor(model => model.User.Phone)</span>
+                <input asp-for="User.Phone" class="form-control" placeholder="Phone" aria-label="Phone" aria-describedby="basic-addon4">
+                <span asp-validation-for="User.Phone" class="text-danger"></span>
+            </div>
+        </div>
+        <!-- Submit button -->
+        <div class="form-group row mb-3">
+            <div class="col-12 d-grid py-4">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
 </div>
 
 <div>
@@ -53,8 +81,24 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        var user = @Html.Raw(userJson);
-        console.log(user);
+        const url = "https://avatar.iran.liara.run/public/job/doctor/male";
+        var preview = document.getElementById("profilePreview");
+        preview.src = url;
+        const isValid = false;
+        function toggleImageError() {
+
+        }
+        function showPreview(event) {
+            if (event.target.files.length < 0) return;
+            var src = URL.createObjectURL(event.target.files[0]);
+            var preview = document.getElementById("profilePreview");
+            preview.src = src;
+        }
+        function validate(event) {
+            event.preventDefault();
+            var preview = document.getElementById("profilePreview");
+            if (preview.src === url) return;
+            event.target.submit();
+        }
     </script>
 }
-

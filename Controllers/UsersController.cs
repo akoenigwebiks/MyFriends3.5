@@ -19,10 +19,13 @@ namespace MyFriends3._5.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.User.ToListAsync());
+            var usersWithProfilePictures = await _context.User
+                .Include(u => u.ProfilePicture)
+                    .ThenInclude(pp => pp.Picture)
+                .ToListAsync();
+            return View(usersWithProfilePictures);
         }
 
-        // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -31,14 +34,29 @@ namespace MyFriends3._5.Controllers
             }
 
             var user = await _context.User
+                .Include(u => u.ProfilePicture)
+                    .ThenInclude(pp => pp.Picture)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (user == null)
             {
                 return NotFound();
             }
 
+            // Convert the profile picture data to a base64 string
+            if (user.ProfilePicture != null && user.ProfilePicture.Picture.PictureFile != null)
+            {
+                string base64Image = Convert.ToBase64String(user.ProfilePicture.Picture.PictureFile);
+                ViewData["ProfilePicture"] = $"data:image/jpeg;base64,{base64Image}";
+            }
+            else
+            {
+                ViewData["ProfilePicture"] = "https://via.placeholder.com/150";
+            }
+
             return View(user);
         }
+
 
         // GET: Users/Create
         public IActionResult Create()
@@ -67,9 +85,11 @@ namespace MyFriends3._5.Controllers
             {
                 return View(userCreateViewModel);
             }
-
+            // 1.add  a user
             _context.User.Add(userCreateViewModel.User);
             await _context.SaveChangesAsync();
+
+            // 2.add a picture
             var picture = new Picture
             {
                 UserId = userCreateViewModel.User.Id,
@@ -78,8 +98,16 @@ namespace MyFriends3._5.Controllers
             };
             _context.Pictures.Add(picture);
             await _context.SaveChangesAsync();
-            userCreateViewModel.User.ProfilePictureId = picture.Id;
+
+            // 3. add a profile picture relation
+            var profilePicture = new ProfilePicture
+            {
+                PictureId = picture.Id,
+                UserId = userCreateViewModel.User.Id
+            };
+            _context.ProfilePictures.Add(profilePicture);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
