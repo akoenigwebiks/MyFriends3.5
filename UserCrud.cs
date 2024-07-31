@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.Elfie.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyFriends3._5.Data;
 using MyFriends3._5.Models;
 using System.Linq.Expressions;
@@ -33,6 +32,15 @@ public class UserCrud
     // FindByAsync(user=>user.FirstName=="DUDU" && user.Phone=="05555")
     // FindByAsync(user=>string.IsullOrempty(user.Email))
 
+    // public bool Foo(User user) => true;
+
+    //public void Test()
+    //{
+    //    var yy = (User x) => x.FirstName == "";
+    //    FindByAsync(yy);
+    //    FindByAsync(Foo);
+    //}
+
     // Generic method to update an entity in the database
     public async Task<int> Update(User model)
     {
@@ -64,5 +72,16 @@ public class UserCrud
     //    .Take(limit)
     //    .ToListAsync();
     //}
-   
+
+    //public Func<string, string> greet = name =>
+    //{
+    //    string greeting = $"Hello {name}!";
+    //    Console.WriteLine(greeting);
+    //    return "dudu";
+    //};
+
+    //public Func<string, string> Greet2 = name =>
+    //  "dudu";
+
+
 }
