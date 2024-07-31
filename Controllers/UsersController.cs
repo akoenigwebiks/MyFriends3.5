@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MyFriends3._5.Data;
 using MyFriends3._5.Models;
 using MyFriends3._5.Services;
@@ -37,6 +38,23 @@ namespace MyFriends3._5.Controllers
                 .Include(u => u.ProfilePicture)
                     .ThenInclude(pp => pp.Picture)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            var v = await _context.User.FindAsync(id);
+
+            // find by
+            var vv = _context.User
+            .Where(x => x.FirstName == "dudu")
+              .ToListAsync();
+            //.First();
+
+            // Update
+            user.FirstName = "shuku";
+            _context.User.Update(user);
+            await _context.SaveChangesAsync();
+
+
+            //delete
+            _context.User.Remove(user);
 
             if (user == null)
             {
